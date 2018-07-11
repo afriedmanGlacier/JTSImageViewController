@@ -1676,7 +1676,17 @@ typedef struct {
     if (self.image && sender.state == UIGestureRecognizerStateBegan) {
         if ([self.interactionsDelegate respondsToSelector:@selector(imageViewerDidLongPress:atRect:)]) {
             CGPoint location = [sender locationInView:self.view];
-            [self.interactionsDelegate imageViewerDidLongPress:self atRect:CGRectMake(location.x, location.y, 0.0f, 0.0f)];
+            
+            //TODO fix logic later, works for now
+            //[self.interactionsDelegate imageViewerDidLongPress:self atRect:CGRectMake(location.x, location.y, 0.0f, 0.0f)];
+            [self becomeFirstResponder];
+            UIMenuController *menu = [UIMenuController sharedMenuController];
+            UIMenuItem *saveImg = [[UIMenuItem alloc] initWithTitle:@"Save" action:@selector(saveImage:)];
+            [menu setMenuItems:@[saveImg]];
+            [menu setTargetRect:self.view.bounds inView:self.view];
+            [menu update];
+            [menu setMenuVisible:YES animated:YES];
+            return;
         }
         
         BOOL allowCopy = NO;
@@ -1907,7 +1917,14 @@ typedef struct {
     if (self.image && action == @selector(copy:)) {
         return YES;
     }
+    if (self.image && action == @selector(saveImage:)) {
+        return YES;
+    }
     return NO;
+}
+
+- (void) saveImage:(id)sender {
+    UIImageWriteToSavedPhotosAlbum(self.image, nil, nil, nil);
 }
 
 - (void)copy:(id)sender {
