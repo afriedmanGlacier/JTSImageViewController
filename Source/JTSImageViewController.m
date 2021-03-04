@@ -1924,11 +1924,29 @@ typedef struct {
 }
 
 - (void) saveImage:(id)sender {
-    UIImageWriteToSavedPhotosAlbum(self.image, nil, nil, nil);
+    //for security/privacy, warn user and verify when saving image to device
+    UIAlertAction *save = [UIAlertAction actionWithTitle:@"Save" style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
+        UIImageWriteToSavedPhotosAlbum(self.image, nil, nil, nil);
+        }];
+    UIAlertAction *cancel = [UIAlertAction actionWithTitle:@"Cancel" style:UIAlertActionStyleCancel handler:nil];
+    UIAlertController *alert = [UIAlertController alertControllerWithTitle:@"Save to Storage?" message:@"Saving this image to your device will allow any other apps on your device to access it." preferredStyle:UIAlertControllerStyleAlert];
+        
+    [alert addAction:save];
+    [alert addAction:cancel];
+    [self presentViewController:alert animated:YES completion:nil];
 }
 
 - (void)copy:(id)sender {
-    [[UIPasteboard generalPasteboard] setImage:self.image];
+    //for security/privacy, warn user and verify when copying image to device clipboard
+    UIAlertAction *save = [UIAlertAction actionWithTitle:@"Copy" style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
+        [[UIPasteboard generalPasteboard] setImage:self.image];
+        }];
+    UIAlertAction *cancel = [UIAlertAction actionWithTitle:@"Cancel" style:UIAlertActionStyleCancel handler:nil];
+    UIAlertController *alert = [UIAlertController alertControllerWithTitle:@"Copy?" message:@"Copying this image to your device will allow any other apps on your device to access it." preferredStyle:UIAlertControllerStyleAlert];
+        
+    [alert addAction:save];
+    [alert addAction:cancel];
+    [self presentViewController:alert animated:YES completion:nil];
 }
 
 #pragma mark - Accessibility
